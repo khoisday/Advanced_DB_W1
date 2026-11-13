@@ -1,0 +1,113 @@
+Student ID: V202603352
+
+[Q1]
+[RA]
+π_{S.sid, S.sname}( ρ_S(Student) ⋈_{S.sid = M.sid} ρ_M(σ_{club_id = 'K1'}(Membership)) )
+∪
+π_{S.sid, S.sname}( ρ_S(Student) ⋈_{S.sid = M.sid} ρ_M(σ_{club_id = 'K2'}(Membership)) )
+
+[RELAX]
+pi S.sid, S.sname (
+  rho S (Student) join S.sid = M.sid rho M (sigma club_id = 'K1' (Membership))
+)
+union
+pi S.sid, S.sname (
+  rho S (Student) join S.sid = M.sid rho M (sigma club_id = 'K2' (Membership))
+)
+
+[RESULT]
+sid,sname
+S01,Alice Chen
+S02,Ben Ortiz
+S03,Cara Singh
+S04,Diego Moss
+S06,Alex Lee
+S07,Gia Kim
+S09,Iris Chen
+
+[Q2]
+[RA]
+π_{S.sid, S.sname, C.cid, C.title}(
+  σ_{S.sname = 'Alex Lee' ∧ S.dept ≠ C.dept}(
+    ( ρ_S(Student) ⋈_{S.sid = E.sid} ρ_E(Enrollment) ) ⋈_{E.cid = C.cid} ρ_C(Course)
+  )
+)
+
+[RELAX]
+pi S.sid, S.sname, C.cid, C.title (
+  sigma S.sname = 'Alex Lee' and S.dept != C.dept (
+    ( rho S (Student) join S.sid = E.sid rho E (Enrollment) )
+    join E.cid = C.cid rho C (Course)
+  )
+)
+
+[RESULT]
+sid,sname,cid,title
+S06,Alex Lee,C104,Machine Learning
+S06,Alex Lee,C107,Ethics of AI
+S11,Alex Lee,C102,Algorithms
+
+[Q3]
+[RA]
+π_{P.pid, P.ptitle}( ρ_P(Project) )
+−
+π_{P.pid, P.ptitle}( ρ_P(Project) ⋈_{P.pid = W.pid} ρ_W(σ_{hours ≥ 10}(WorksOn)) )
+
+[RELAX]
+pi P.pid, P.ptitle (rho P (Project))
+-
+pi P.pid, P.ptitle (
+  rho P (Project) join P.pid = W.pid rho W (sigma hours >= 10 (WorksOn))
+)
+
+[RESULT]
+pid,ptitle
+P5,Energy Dashboard
+P8,Quantum Tutor
+
+[Q4]
+[RA]
+π_{S.sid, S.sname}(
+  ρ_S(Student) ⋈_{S.sid = A.sid}
+  ( ρ_A(σ_{hours ≥ 5}(WorksOn)) ⋈_{A.sid = B.sid ∧ A.pid ≠ B.pid} ρ_B(σ_{hours ≥ 5}(WorksOn)) )
+)
+
+[RELAX]
+pi S.sid, S.sname (
+  rho S (Student) join S.sid = A.sid (
+    rho A (sigma hours >= 5 (WorksOn))
+    join A.sid = B.sid and A.pid != B.pid
+    rho B (sigma hours >= 5 (WorksOn))
+  )
+)
+
+[RESULT]
+sid,sname
+S02,Ben Ortiz
+S04,Diego Moss
+S05,Erin Park
+S06,Alex Lee
+S07,Gia Kim
+S10,Jae Patel
+
+[Q5]
+[RA]
+π_{S.sid, S.sname}(
+  ρ_S(Student) ⋈_{S.sid = G.sid}
+  ρ_G( π_{sid}(Enrollment) − π_{sid}(σ_{grade < 80}(Enrollment)) )
+)
+
+[RELAX]
+pi S.sid, S.sname (
+  rho S (Student) join S.sid = G.sid rho G (
+    pi sid (Enrollment) - pi sid (sigma grade < 80 (Enrollment))
+  )
+)
+
+[RESULT]
+sid,sname
+S01,Alice Chen
+S03,Cara Singh
+S06,Alex Lee
+S11,Alex Lee
+S12,Lina Gomez
